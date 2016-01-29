@@ -20,7 +20,7 @@ namespace Rituals.Services
                 allPlayers.RemoveAt(allPlayers.FindIndex(p => p.ConnectionId == connectionId));
         }
 
-        internal static object GetConnectedCount()
+        internal static int GetConnectedCount()
         {
             return allPlayers.Count;
         }

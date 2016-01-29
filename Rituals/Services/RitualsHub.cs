@@ -18,8 +18,9 @@ namespace Rituals.Services
 
         public void StartGame()
         {
+            int activePlayersCount = GameRoom.GetConnectedCount();
             int gestureNumber = 0; // Random
-            Clients.All.startGame(gestureNumber);
+            Clients.All.startGame(activePlayersCount, gestureNumber);
         }
 
         public void Success()
@@ -32,7 +33,8 @@ namespace Rituals.Services
                 GameRoom.DropPlayerByConnectionId(loser.ConnectionId);
                 this.Clients.Client(loser.ConnectionId).Stop();
                 int nextGameGesture = 1;
-                this.Clients.All.nextGame(nextGameGesture);
+                int activePlayersCount = GameRoom.GetConnectedCount();
+                this.Clients.All.nextGame(activePlayersCount, nextGameGesture);
             }
             UpdateUI();
         }
