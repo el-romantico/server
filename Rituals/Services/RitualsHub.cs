@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 
 namespace Rituals.Services
 {
     public class RitualsHub : Hub
     {
-
-        public void Send(string name, string message)
+        public void CheckConnection()
         {
-            Clients.All.addNewMessageToPage(name, message);
-        }
-
-        public void Hello()
-        {
-            Clients.All.hello();
+            Clients.All.checkConnection();
         }
 
         public void Connect()
