@@ -20,6 +20,11 @@ namespace Rituals.Services
                 allPlayers.RemoveAt(allPlayers.FindIndex(p => p.ConnectionId == connectionId));
         }
 
+        internal static object GetConnectedCount()
+        {
+            return allPlayers.Count;
+        }
+
         internal static void PlayerSuccess(string connectionId)
         {
             allPlayers[allPlayers.FindIndex(x => x.ConnectionId == connectionId)].StillPlaying = false;
@@ -33,6 +38,11 @@ namespace Rituals.Services
         internal static Player GetLoser()
         {
             return allPlayers.Single(p => p.StillPlaying);
+        }
+
+        internal static object GetSuccessfulCount()
+        {
+            return allPlayers.Count(x => !x.StillPlaying);
         }
     }
 }
