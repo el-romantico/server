@@ -1,18 +1,18 @@
 ﻿$(function () {
-    var chat = $.connection.ritualsHub;
+    var hub = $.connection.ritualsHub;
     // Create a function that the hub can call back to display messages.
-    chat.client.hello = function () {
-        alert("kur");
+    hub.client.hello = function () {
+        alert("Successful call to hello");
     };
-    // Get the user name and store it to prepend to messages.
-    //$('#displayname').val(prompt('Enter your name:', ''));
-    // Set initial focus to message input box.
-    //$('#message').focus();
-    // Start the connection.
+    
     $.connection.hub.start().done(function () {
         $('#test').click(function () {
-            chat.server.hello();
-            console.log("asd");
+            hub.server.hello();
+            console.log("Said hello");
         });
+        $('#start-game').click(function () {
+            hub.server.startGame();
+            alert("Game started");
+        })
     });
 });

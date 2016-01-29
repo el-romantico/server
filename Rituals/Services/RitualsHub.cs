@@ -23,6 +23,7 @@ namespace Rituals.Services
         public void Connect()
         {
             GameRoom.AddPlayer(Context.ConnectionId);
+            // Show real time on web site
         }
 
         public void StartGame()
@@ -47,6 +48,7 @@ namespace Rituals.Services
 
         public override Task OnDisconnected(bool stopCalled)
         {
+            GameRoom.DropPlayerByConnectionId(Context.ConnectionId);
             this.Clients.Client(Context.ConnectionId).Stop();
             return base.OnDisconnected(stopCalled);
         }

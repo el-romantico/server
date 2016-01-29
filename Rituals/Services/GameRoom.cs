@@ -16,7 +16,8 @@ namespace Rituals.Services
 
         public static void DropPlayerByConnectionId(string connectionId)
         {
-            allPlayers.RemoveAt(allPlayers.FindIndex(p => p.ConnectionId == connectionId));
+            if (allPlayers.Any(x => x.ConnectionId == connectionId))
+                allPlayers.RemoveAt(allPlayers.FindIndex(p => p.ConnectionId == connectionId));
         }
 
         internal static void PlayerSuccess(string connectionId)
