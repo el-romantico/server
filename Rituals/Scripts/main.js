@@ -12,32 +12,36 @@
     }
     hub.client.endGame = function (win) {
         if(win) {
-            console.log("You win!");
+            append("You win!");
         } else {
-            console.log("You lose!");
+            append("You lose!");
         }
     }
     
     $.connection.hub.start().done(function () {
         $('#test').click(function () {
             hub.server.checkConnection();
-            console.log("Said hello");
+            append("Said hello");
         });
         $('#start-game').click(function () {
             hub.server.startGame();
-            console.log("Game started");
+            append("Game started");
         });
         $('#connect').click(function () {
             hub.server.connect();
-            console.log("Connected");
+            append("Connected");
         });
         $('#disconnect-all').click(function () {
             hub.server.disconnectAll();
-            console.log("Dropped All players");
+            append("Dropped All players");
         });
         $("#success").click(function () {
             hub.server.success();
-            console.log("player succeeded");
+            append("player succeeded");
         });
     });
 });
+
+function append(text) {
+    $("#output").text($("#output").text() + '\n' + text);
+}
