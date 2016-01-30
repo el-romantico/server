@@ -47,8 +47,12 @@ namespace Rituals.Services
 
         internal static bool TimeoutOutExpiredForConnectionId(string connectionId)
         {
-            allPlayers[allPlayers.FindIndex(x => x.ConnectionId == connectionId)].TimeoutExpired = true;
-            return allPlayers.All(x => x.TimeoutExpired);
+            if (allPlayers.Any(x => x.ConnectionId == connectionId))
+            {
+                allPlayers[allPlayers.FindIndex(x => x.ConnectionId == connectionId)].TimeoutExpired = true;
+                return allPlayers.All(x => x.TimeoutExpired);
+            }
+            return false;
         }
 
         internal static bool CheckWinningCondition()

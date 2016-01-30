@@ -49,7 +49,6 @@ namespace Rituals.Services
 
         public void TimeoutExpired()
         {
-            
             lock(theLock)
             {
                 var expiredForEveryone = GameRoom.TimeoutOutExpiredForConnectionId(Context.ConnectionId);

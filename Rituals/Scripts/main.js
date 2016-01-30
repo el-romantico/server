@@ -1,6 +1,7 @@
 ﻿var secondsConst = 30;
 var interval = null;
 var totalSeconds = secondsConst;
+
 $(function () {
     var hub = $.connection.ritualsHub;
     
@@ -15,6 +16,8 @@ $(function () {
     };
     hub.client.endGame = function (win) {
         clearInterval(interval);
+        totalSeconds = secondsConst;
+        $('#timer').text(totalSeconds);
         win ? append('You win!') : append('You lose!');
     };
     hub.client.nextGame = function (playersCount, gesture) {
