@@ -45,7 +45,12 @@ namespace Rituals.Services
             return allPlayers.Single(p => p.StillPlaying);
         }
 
-        internal static object GetSuccessfulCount()
+        internal static Player GetWinner()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static int GetSuccessfulCount()
         {
             return allPlayers.Count(x => !x.StillPlaying);
         }

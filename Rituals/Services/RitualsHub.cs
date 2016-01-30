@@ -31,10 +31,20 @@ namespace Rituals.Services
             {
                 var loser = GameRoom.GetLoser();
                 GameRoom.DropPlayerByConnectionId(loser.ConnectionId);
-                this.Clients.Client(loser.ConnectionId).Stop();
+                var looserClient = this.Clients.Client(loser.ConnectionId);
+                looserClient.endGame(false);
+                looserClient.Stop();
                 int nextGameGesture = 1;
-                int activePlayersCount = GameRoom.GetConnectedCount();
-                this.Clients.All.nextGame(activePlayersCount, nextGameGesture);
+                int activePlayersCount = GameRoom.GetConnectedCount() - GameRoom.GetSuccessfulCount();
+                if(activePlayersCount == 1)
+                {
+                    var winner = GameRoom.GetWinner();
+                    this.Clients.Client(winner.ConnectionId).endGame(true);
+                }
+                else
+                {
+                    this.Clients.All.nextGame(activePlayersCount, nextGameGesture);
+                }
             }
             UpdateUI();
         }
