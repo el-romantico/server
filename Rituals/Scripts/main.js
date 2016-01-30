@@ -4,22 +4,28 @@
     hub.client.checkConnection = function () {
         alert('Connection check successful');
     };
-    hub.client.connectedCount = function(count) { 
+    hub.client.connectedCount = function (count) {
         $('#active-connections').text(count);
-    }
+    };
     hub.client.successfulCount = function (count) {
         $('#successful-players').text(count);
-    }
+    };
     hub.client.endGame = function (win) {
-        if(win) {
+        if (win) {
             append('You win!');
         } else {
             append('You lose!');
         }
-    }
+    };
     hub.client.updateCountdown = function (countdown) {
         $('#timer').text(countdown);
-    }
+    };
+    hub.client.nextGame = function (playersCount, gesture) {
+        append('Initiating game with:' + playersCount + ' players');
+    };
+    hub.client.startGame = function (playersCount, gesture) {
+        append('Initiating game with:' + playersCount + ' players');
+    };
     
     $.connection.hub.start().done(function () {
         $('#test').click(function () {
@@ -41,6 +47,10 @@
             hub.server.success();
             append('Player succeeded');
         });
+        $('#refresh-connection').click(function () {
+            hub.server.updateUI();
+        });
+        hub.server.updateUI();
     });
 });
 

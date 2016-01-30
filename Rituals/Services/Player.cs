@@ -4,5 +4,6 @@
     {
         public string ConnectionId { get; set; }
         public bool StillPlaying { get; set; } = true;
+        public bool TimeoutExpired { get; set; }
     }
 }

@@ -2,15 +2,11 @@
 using Microsoft.AspNet.SignalR;
 using System.Linq;
 using System.Timers;
-using System;
 
 namespace Rituals.Services
 {
     public class RitualsHub : Hub
     {
-        static Timer timer;
-        static int countdown;
-
         public void CheckConnection()
         {
             Clients.All.checkConnection();
@@ -27,56 +23,8 @@ namespace Rituals.Services
             int activePlayersCount = GameRoom.GetConnectedCount();
             int gestureNumber = GameRoom.GetNextGestureId();
             Clients.All.startGame(activePlayersCount, gestureNumber);
-            StartTimer();
         }
 
-        private void StopTimer()
-        {
-            timer.Stop();
-        }
-
-        public void StartTimer()
-        {
-            countdown = 30;
-            timer = new Timer(1000);
-            timer.Elapsed += (sender, e) =>
-            {
-                UpdateCountdown(countdown);
-                countdown--;
-                if (countdown <= 0)
-                {
-                    timer.Stop();
-                    timer.Dispose();
-                    var connectedPlayers = GameRoom.GetConnectedPlayers();
-                    if (connectedPlayers.All(x => x.StillPlaying))
-                    {
-                        NextGame();
-                    }
-                    else
-                    {
-                        var winnerIds = connectedPlayers
-                            .Where(x => !x.StillPlaying)
-                            .Select(x => x.ConnectionId)
-                            .ToArray();
-                        var loserIds = connectedPlayers
-                            .Where(x => x.StillPlaying)
-                            .Select(p => p.ConnectionId)
-                            .ToArray();
-                        Clients.Clients(loserIds).endGame(false);
-                        loserIds.ToList().ForEach(ci => GameRoom.DropPlayerByConnectionId(ci));
-                        if (winnerIds.Length == 1)
-                        {
-                            Clients.Client(winnerIds.Single()).endGame(true);
-                        }
-                        else
-                        {
-                            NextGame();
-                        }
-                    }
-                }
-            };
-            timer.Start();
-        }
 
         public void Success()
         {
@@ -90,6 +38,62 @@ namespace Rituals.Services
             UpdateUI();
         }
 
+        public void DisconnectAll()
+        {
+            GameRoom.DropAllPlayers();
+            UpdateUI();
+        }
+        
+        public void TimeoutExpired()
+        {
+            var expiredForEveryone = GameRoom.TimeoutOutExpiredForConnectionId(Context.ConnectionId);
+            if(expiredForEveryone)
+            {
+                TimeoutExpiredForEveryOne();
+            }
+        }
+
+        private void TimeoutExpiredForEveryOne()
+        {
+            var connectedPlayers = GameRoom.GetConnectedPlayers();
+            if (connectedPlayers.Any())
+            {
+                if (connectedPlayers.All(x => x.StillPlaying))
+                {
+                    NextGame();
+                }
+                else
+                {
+                    var winnerIds = GameRoom.GetWinnersConnectionIds();
+                    var loserIds = GameRoom.GetLosersConnectionIds();
+                    Clients.Clients(loserIds).endGame(false);
+                    loserIds.ToList().ForEach(ci => GameRoom.DropPlayerByConnectionId(ci));
+                    if (winnerIds.Length == 1)
+                    {
+                        Clients.Client(winnerIds.Single()).endGame(true);
+                    }
+                    else
+                    {
+                        NextGame();
+                    }
+                }
+            }
+        }
+
+        public void UpdateUI()
+        {
+            Clients.All.connectedCount(GameRoom.GetConnectedCount());
+            Clients.All.successfulCount(GameRoom.GetSuccessfulCount());
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            GameRoom.DropPlayerByConnectionId(Context.ConnectionId);
+            this.Clients.Client(Context.ConnectionId).Stop();
+            UpdateUI();
+            return base.OnDisconnected(stopCalled);
+        }
+
         private void UpdateWinners()
         {
             int winnersCount = GameRoom.GetSuccessfulCount();
@@ -97,7 +101,6 @@ namespace Rituals.Services
             {
                 var winner = GameRoom.GetWinner();
                 this.Clients.Client(winner.ConnectionId).endGame(true);
-                StopTimer();
             }
             else
             {
@@ -113,27 +116,8 @@ namespace Rituals.Services
             var loserClient = this.Clients.Client(loser.ConnectionId);
             loserClient.endGame(false);
         }
-
-        public void UpdateUI()
-        {
-            Clients.All.connectedCount(GameRoom.GetConnectedCount());
-            Clients.All.successfulCount(GameRoom.GetSuccessfulCount());
-        }
-
-        public void DisconnectAll()
-        {
-            GameRoom.DropAllPlayers();
-            StopTimer();
-            UpdateUI();
-        }
-
-        public void UpdateCountdown(int countdown)
-        {
-            var activePlayers = GameRoom.GetConnectedPlayers();
-            Clients.Clients(activePlayers.Select(p => p.ConnectionId).ToArray()).updateCountdown(countdown);
-        }
-
-        public void NextGame()
+        
+        private void NextGame()
         {
             GameRoom.RestartPlayersState();
             int gestureId = GameRoom.GetNextGestureId();
@@ -142,15 +126,6 @@ namespace Rituals.Services
                 .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
                 .nextGame(activePlayers.Count, gestureId);
             UpdateUI();
-            StartTimer();
-        }
-
-        public override Task OnDisconnected(bool stopCalled)
-        {
-            GameRoom.DropPlayerByConnectionId(Context.ConnectionId);
-            this.Clients.Client(Context.ConnectionId).Stop();
-            UpdateUI();
-            return base.OnDisconnected(stopCalled);
         }
     }
 }
