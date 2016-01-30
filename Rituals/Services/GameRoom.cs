@@ -30,6 +30,11 @@ namespace Rituals.Services
             return allPlayers.Count;
         }
 
+        internal static List<Player> GetConnectedPlayers()
+        {
+            return allPlayers.ToList();
+        }
+
         internal static void PlayerSuccess(string connectionId)
         {
             allPlayers[allPlayers.FindIndex(x => x.ConnectionId == connectionId)].StillPlaying = false;

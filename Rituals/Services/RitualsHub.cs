@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
+using System.Linq;
 
 namespace Rituals.Services
 {
@@ -46,7 +47,10 @@ namespace Rituals.Services
             else
             {
                 int nextGameGesture = 1;
-                this.Clients.All.nextGame(winnersCount, nextGameGesture);
+                var activePlayers = GameRoom.GetConnectedPlayers();
+                this.Clients
+                    .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
+                    .nextGame(winnersCount, nextGameGesture);
             }
             GameRoom.RestartPlayersState();
         }
@@ -57,7 +61,6 @@ namespace Rituals.Services
             GameRoom.DropPlayerByConnectionId(loser.ConnectionId);
             var loserClient = this.Clients.Client(loser.ConnectionId);
             loserClient.endGame(false);
-            loserClient.Stop();
         }
 
         public void UpdateUI()
