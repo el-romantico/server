@@ -9,6 +9,7 @@ namespace Rituals.Services
     public class RitualsHub : Hub
     {
         static Timer timer;
+        static int countdown;
 
         public void CheckConnection()
         {
@@ -29,15 +30,20 @@ namespace Rituals.Services
             StartTimer();
         }
 
+        private void StopTimer()
+        {
+            timer.Stop();
+        }
+
         public void StartTimer()
         {
-            var countdown = 31;
+            countdown = 30;
             timer = new Timer(1000);
             timer.Elapsed += (sender, e) =>
             {
-                countdown--;
                 UpdateCountdown(countdown);
-                if (countdown == 0)
+                countdown--;
+                if (countdown <= 0)
                 {
                     timer.Stop();
                     timer.Dispose();
@@ -45,7 +51,6 @@ namespace Rituals.Services
                     if (connectedPlayers.All(x => x.StillPlaying))
                     {
                         NextGame();
-                        StartTimer();
                     }
                     else
                     {
@@ -65,8 +70,7 @@ namespace Rituals.Services
                         }
                         else
                         {
-                            var gestureId = GameRoom.GetNextGestureId();
-                            Clients.Clients(winnerIds).nextGame(winnerIds.Length, gestureId);
+                            NextGame();
                         }
                     }
                 }
@@ -93,6 +97,7 @@ namespace Rituals.Services
             {
                 var winner = GameRoom.GetWinner();
                 this.Clients.Client(winner.ConnectionId).endGame(true);
+                StopTimer();
             }
             else
             {
@@ -129,11 +134,14 @@ namespace Rituals.Services
 
         public void NextGame()
         {
+            GameRoom.RestartPlayersState();
             int gestureId = GameRoom.GetNextGestureId();
             var activePlayers = GameRoom.GetConnectedPlayers();
             Clients
                 .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
                 .nextGame(activePlayers.Count, gestureId);
+            UpdateUI();
+            StartTimer();
         }
 
         public override Task OnDisconnected(bool stopCalled)
