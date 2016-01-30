@@ -147,6 +147,10 @@ namespace Rituals.Services
                 GameRoom.DropPlayerByConnectionId(connectionIds[i]);
             }
             Clients.Clients(connectionIds).endGame(outcome);
+            if(outcome)
+            {
+                Clients.Client(GameRoom.GetAdminConnectionId()).endGame(false);
+            }
             UpdateUI();
         }
     }
