@@ -42,6 +42,7 @@ namespace Rituals.Services
 
         public void DisconnectAll()
         {
+            EndGame(GameRoom.GetConnectedPlayers().Select(x => x.ConnectionId).ToArray(), false);
             GameRoom.DropAllPlayers();
             UpdateUI();
         }
