@@ -1,5 +1,6 @@
-﻿var interval = null;
-var totalSeconds = 15;
+﻿var secondsConst = 15;
+var interval = null;
+var totalSeconds = secondsConst;
 $(function () {
     var hub = $.connection.ritualsHub;
     
@@ -16,9 +17,6 @@ $(function () {
         clearInterval(interval);
         win ? append('You win!') : append('You lose!');
     };
-    hub.client.updateCountdown = function (countdown) {
-        
-    };
     hub.client.nextGame = function (playersCount, gesture) {
         initiateGame(playersCount);
     };
@@ -28,7 +26,7 @@ $(function () {
     
     function initiateGame(playersCount) {
         append('Initiating game with:' + playersCount + ' players');
-        totalSeconds = 15;
+        totalSeconds = secondsConst;
         interval = setInterval(setTime, 1000);
 
         function setTime() {
@@ -36,7 +34,7 @@ $(function () {
             if (totalSeconds <= 0) {
                 hub.server.timeoutExpired();
                 clearInterval(interval);
-                totalSeconds = 15;
+                totalSeconds = secondsConst;
             }
             $('#timer').text(totalSeconds);
         }
@@ -56,6 +54,9 @@ $(function () {
         });
         $('#disconnect-all').click(function () {
             hub.server.disconnectAll();
+            clearInterval(interval);
+            totalSeconds = secondsConst;
+            $('#timer').text(totalSeconds);
             append('Dropped All players');
         });
         $('#success').click(function () {
@@ -66,7 +67,7 @@ $(function () {
             hub.server.updateUI();
         });
         hub.server.updateUI();
-        $('#timer').text(15);
+        $('#timer').text(secondsConst);
     });
 });
 
