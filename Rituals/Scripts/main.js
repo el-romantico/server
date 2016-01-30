@@ -27,6 +27,7 @@ $(function () {
     function initiateGame(playersCount) {
         append('Initiating game with:' + playersCount + ' players');
         totalSeconds = secondsConst;
+        clearInterval(interval);
         interval = setInterval(setTime, 1000);
 
         function setTime() {

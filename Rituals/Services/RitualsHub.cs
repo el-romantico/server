@@ -7,6 +7,8 @@ namespace Rituals.Services
 {
     public class RitualsHub : Hub
     {
+        private static object theLock = 42;
+
         public void CheckConnection()
         {
             Clients.All.checkConnection();
@@ -43,29 +45,33 @@ namespace Rituals.Services
             GameRoom.DropAllPlayers();
             UpdateUI();
         }
-        
+
         public void TimeoutExpired()
         {
-            var expiredForEveryone = GameRoom.TimeoutOutExpiredForConnectionId(Context.ConnectionId);
-            if(expiredForEveryone)
+            
+            lock(theLock)
             {
-                TimeoutExpiredForEveryOne();
+                var expiredForEveryone = GameRoom.TimeoutOutExpiredForConnectionId(Context.ConnectionId);
+                if (expiredForEveryone)
+                {
+                    TimeoutExpiredForEveryOne();
+                }
             }
         }
 
         private void TimeoutExpiredForEveryOne()
         {
-            var connectedPlayers = GameRoom.GetConnectedPlayers();
-            if (connectedPlayers.Any())
+            var winnerIds = GameRoom.GetWinnersConnectionIds();
+            var loserIds = GameRoom.GetLosersConnectionIds();
+            bool thereAreActivePlayers = winnerIds.Length + loserIds.Length > 0;
+            if (thereAreActivePlayers)
             {
-                if (connectedPlayers.All(x => x.StillPlaying))
+                if(winnerIds.Length == 0)
                 {
                     NextGame();
                 }
                 else
                 {
-                    var winnerIds = GameRoom.GetWinnersConnectionIds();
-                    var loserIds = GameRoom.GetLosersConnectionIds();
                     EndGame(loserIds, false);
                     if (winnerIds.Length == 1)
                     {
@@ -113,7 +119,7 @@ namespace Rituals.Services
             var loser = GameRoom.GetLoser();
             EndGame(new string[] { loser.ConnectionId }, false);
         }
-        
+
         private void NextGame()
         {
             GameRoom.RestartPlayersState();
