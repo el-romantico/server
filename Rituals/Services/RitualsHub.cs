@@ -48,6 +48,7 @@ namespace Rituals.Services
                 int nextGameGesture = 1;
                 this.Clients.All.nextGame(winnersCount, nextGameGesture);
             }
+            GameRoom.RestartPlayersState();
         }
 
         private void UpdateLoser()

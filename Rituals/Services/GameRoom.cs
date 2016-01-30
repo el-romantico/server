@@ -35,6 +35,11 @@ namespace Rituals.Services
             allPlayers[allPlayers.FindIndex(x => x.ConnectionId == connectionId)].StillPlaying = false;
         }
 
+        internal static void RestartPlayersState()
+        {
+            allPlayers.ForEach(p => p.StillPlaying = true);
+        }
+
         internal static bool CheckWinningCondition()
         { 
             return allPlayers.Count(p => p.StillPlaying) == 1;
