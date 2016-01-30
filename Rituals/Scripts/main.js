@@ -32,12 +32,12 @@ $(function () {
 
         function setTime() {
             --totalSeconds;
+            $('#timer').text(totalSeconds);
             if (totalSeconds <= 0) {
                 hub.server.timeoutExpired();
                 clearInterval(interval);
                 totalSeconds = secondsConst;
             }
-            $('#timer').text(totalSeconds);
         }
     }
 
