@@ -123,6 +123,7 @@ namespace Rituals.Services
         public void DisconnectAll()
         {
             GameRoom.DropAllPlayers();
+            StopTimer();
             UpdateUI();
         }
 
