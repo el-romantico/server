@@ -21,7 +21,6 @@
     $.connection.hub.start().done(function () {
         $('#test').click(function () {
             hub.server.checkConnection();
-            append("Said hello");
         });
         $('#start-game').click(function () {
             hub.server.startGame();
@@ -37,11 +36,11 @@
         });
         $("#success").click(function () {
             hub.server.success();
-            append("player succeeded");
+            append("Player succeeded");
         });
     });
 });
 
 function append(text) {
-    $("#output").text($("#output").text() + '\n' + text);
+    $("#output").text($("#output").text() + text + '\n');
 }

@@ -11,7 +11,8 @@ namespace Rituals.Services
 
         public static void AddPlayer(string connectionId)
         {
-            allPlayers.Add(new Player() { ConnectionId = connectionId, StillPlaying = true });
+            if(!allPlayers.Any(x => x.ConnectionId == connectionId))
+                allPlayers.Add(new Player() { ConnectionId = connectionId, StillPlaying = true });
         }
 
         internal static void DropAllPlayers()
