@@ -20,8 +20,13 @@ namespace Rituals.Services
             UpdateUI();
         }
 
-        public void StartGame()
+        public void StartGame(bool asGameAdmin = false)
         {
+            if(asGameAdmin)
+            {
+                GameRoom.SetAdmin(Context.ConnectionId);
+            }
+
             int activePlayersCount = GameRoom.GetConnectedCount();
             int gestureNumber = GameRoom.GetNextGestureId();
             Clients.All.startGame(activePlayersCount, gestureNumber);
@@ -125,9 +130,13 @@ namespace Rituals.Services
             GameRoom.RestartPlayersState();
             int gestureId = GameRoom.GetNextGestureId();
             var activePlayers = GameRoom.GetConnectedPlayers();
+            string adminConnectioId = GameRoom.GetAdminConnectionId();
             Clients
-                .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
+                .Clients(activePlayers
+                    .Select(x => x.ConnectionId)
+                    .ToArray())
                 .nextGame(activePlayers.Count, gestureId);
+            Clients.Client(adminConnectioId).nextGame(activePlayers.Count, gestureId);
             UpdateUI();
         }
 

@@ -3,12 +3,16 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <button id="connect" class="btn btn-default">Connect</button>
-        <button id="test" class="btn btn-default">Test connection</button>
-        <button id="start-game" class="btn btn-default">Start Game</button>
-        <button id="success" class="btn btn-default">Success</button>
-        <button id="refresh-connection" class="btn btn-default">Refresh connections</button>
-        <button id="disconnect-all" class="btn btn-default">Disconnect All</button>
+        <button id="start-game-admin" class="btn btn-default">Start Game as Admin</button>
+        <button id="debug-mode" class="btn btn-default">Debug mode...</button>
+        <div id="debug-tools" class="hidden">
+            <button id="connect" class="btn btn-default">Connect</button>
+            <button id="test" class="btn btn-default">Test connection</button>
+            <button id="success" class="btn btn-default">Success</button>
+            <button id="start-game" class="btn btn-default">Start Game</button>
+            <button id="refresh-connection" class="btn btn-default">Refresh connections</button>
+            <button id="disconnect-all" class="btn btn-default">Disconnect All</button>
+        </div>
     </div>
 </div>
 <div class="row">
@@ -22,7 +26,8 @@
 </div>
 <div>
     <textarea id="output"></textarea>
-    <img src="~/Content/Gestures/dishwashing.gif" title="id-0" />
-    <img src="~/Content/Gestures/mouthwashing.gif" title="id-1" />
-    <img src="~/Content/Gestures/turntablescratching.gif" title="id-2" />
+    <img id="gesture-0" class="gesture hidden" src="~/Content/Gestures/dishwashing.gif" title="id-0" />
+    <img id="gesture-1" class="gesture hidden" src="~/Content/Gestures/mouthwashing.gif" title="id-1" />
+    <img id="gesture-2" class="gesture hidden" src="~/Content/Gestures/turntablescratching.gif" title="id-2" />
+    <img id="gesture-3" class="gesture hidden" src="~/Content/Gestures/swordsharpening.gif" title="id-3" />
 </div>

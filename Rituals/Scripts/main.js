@@ -20,17 +20,24 @@ $(function () {
         $('#timer').text(totalSeconds);
         win ? append('You win!') : append('You lose!');
     };
-    hub.client.nextGame = function (playersCount, gesture) {
-        initiateGame(playersCount);
+    hub.client.nextGame = function (playersCount, gestureId) {
+        initiateGame(playersCount, gestureId);
     };
-    hub.client.startGame = function (playersCount, gesture) {
-        initiateGame(playersCount);
+    hub.client.startGame = function (playersCount, gestureId) {
+        initiateGame(playersCount, gestureId);
     };
-    
-    function initiateGame(playersCount) {
+
+    $('#debug-mode').click(function () {
+        $('#debug-tools').toggleClass('hidden');
+    });
+
+    function initiateGame(playersCount, gestureId) {
         append('Initiating game with:' + playersCount + ' players');
+        $('.gesture').addClass('hidden');
+        $('#gesture-' + gestureId).removeClass('hidden');
         totalSeconds = secondsConst;
-        clearInterval(interval);
+        clearInterval(
+interval);
         interval = setInterval(setTime, 1000);
 
         function setTime() {
@@ -45,11 +52,15 @@ $(function () {
     }
 
     $.connection.hub.start().done(function () {
+        $('#start-game-admin').click(function () {
+            hub.server.startGame(true);
+            append('Game started as admin');
+        })
         $('#test').click(function () {
             hub.server.checkConnection();
         });
         $('#start-game').click(function () {
-            hub.server.startGame();
+            hub.server.startGame(false);
             append('Game started');
         });
         $('#connect').click(function () {

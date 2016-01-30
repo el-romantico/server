@@ -7,11 +7,19 @@ namespace Rituals.Services
     public static class GameRoom
     {
         private static List<Player> allPlayers = new List<Player>();
+        private static int[] gesturesIdsList = new int[] { 3, 1, 2, 0 };
+        private static int currentGestureIndex = 0;
+        private static string gameAdmin;
 
         public static void AddPlayer(string connectionId)
         {
             if(!allPlayers.Any(x => x.ConnectionId == connectionId))
                 allPlayers.Add(new Player() { ConnectionId = connectionId, StillPlaying = true, TimeoutExpired = false });
+        }
+
+        internal static void SetAdmin(string connectionId)
+        {
+            gameAdmin = connectionId;
         }
 
         public static void DropAllPlayers()
@@ -93,7 +101,12 @@ namespace Rituals.Services
 
         internal static int GetNextGestureId()
         {
-            return 0;
+            return gesturesIdsList[currentGestureIndex++ % gesturesIdsList.Length];
+        }
+
+        internal static string GetAdminConnectionId()
+        {
+            return gameAdmin;
         }
     }
 }

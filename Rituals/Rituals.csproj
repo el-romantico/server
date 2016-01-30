@@ -265,6 +265,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\Gestures\dishwashing.gif" />
     <Content Include="Content\Gestures\mouthwashing.gif" />
+    <Content Include="Content\Gestures\swordsharpening.gif" />
     <Content Include="Content\Gestures\turntablescratching.gif" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
