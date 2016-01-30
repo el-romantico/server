@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rituals.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,6 +11,7 @@ namespace Rituals.Controllers
     {
         public ActionResult Index()
         {
+            GameRoom.DropAllPlayers();
             ViewBag.Title = "Home Page";
 
             return View();

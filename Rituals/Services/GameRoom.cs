@@ -14,6 +14,11 @@ namespace Rituals.Services
             allPlayers.Add(new Player() { ConnectionId = connectionId, StillPlaying = true });
         }
 
+        internal static void DropAllPlayers()
+        {
+            allPlayers.Clear();
+        }
+
         public static void DropPlayerByConnectionId(string connectionId)
         {
             if (allPlayers.Any(x => x.ConnectionId == connectionId))

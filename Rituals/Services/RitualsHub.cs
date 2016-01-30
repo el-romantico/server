@@ -39,18 +39,24 @@ namespace Rituals.Services
             UpdateUI();
         }
 
+        public void UpdateUI()
+        {
+            Clients.All.connectedCount(GameRoom.GetConnectedCount());
+            Clients.All.successfulCount(GameRoom.GetSuccessfulCount());
+        }
+
+        public void DisconnectAll()
+        {
+            GameRoom.DropAllPlayers();
+            UpdateUI();
+        }
+
         public override Task OnDisconnected(bool stopCalled)
         {
             GameRoom.DropPlayerByConnectionId(Context.ConnectionId);
             this.Clients.Client(Context.ConnectionId).Stop();
             UpdateUI();
             return base.OnDisconnected(stopCalled);
-        }
-
-        private void UpdateUI()
-        {
-            Clients.All.connectedCount(GameRoom.GetConnectedCount());
-            Clients.All.successfulCount(GameRoom.GetSuccessfulCount());
         }
     }
 }

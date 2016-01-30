@@ -5,10 +5,10 @@
         alert("Connection check successful");
     };
     hub.client.connectedCount = function(count) { 
-        $("#active-connections").val(count);
+        $("#active-connections").text(count);
     }
     hub.client.successfulCount = function (count) {
-        $('#successful-players').val(count);
+        $('#successful-players').text(count);
     }
     
     $.connection.hub.start().done(function () {
@@ -18,7 +18,15 @@
         });
         $('#start-game').click(function () {
             hub.server.startGame();
-            alert("Game started");
-        })
+            console.log("Game started");
+        });
+        $('#connect').click(function () {
+            hub.server.connect();
+            console.log("Connected");
+        });
+        $('#disconnect-all').click(function () {
+            hub.server.disconnectAll();
+            console.log("Dropped All players");
+        });
     });
 });
