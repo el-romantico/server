@@ -66,12 +66,10 @@ namespace Rituals.Services
                 {
                     var winnerIds = GameRoom.GetWinnersConnectionIds();
                     var loserIds = GameRoom.GetLosersConnectionIds();
-                    loserIds.ToList().ForEach(ci => GameRoom.DropPlayerByConnectionId(ci));
-                    Clients.Clients(loserIds).endGame(false);
+                    EndGame(loserIds, false);
                     if (winnerIds.Length == 1)
                     {
-                        GameRoom.DropPlayerByConnectionId(winnerIds.Single());
-                        Clients.Client(winnerIds.Single()).endGame(true);
+                        EndGame(winnerIds, true);
                     }
                     else
                     {
@@ -101,8 +99,7 @@ namespace Rituals.Services
             if (winnersCount == 1)
             {
                 var winner = GameRoom.GetWinner();
-                GameRoom.DropPlayerByConnectionId(winner.ConnectionId);
-                this.Clients.Client(winner.ConnectionId).endGame(true);
+                EndGame(new string[] { winner.ConnectionId }, true);
             }
             else
             {
@@ -114,9 +111,7 @@ namespace Rituals.Services
         private void UpdateLoser()
         {
             var loser = GameRoom.GetLoser();
-            GameRoom.DropPlayerByConnectionId(loser.ConnectionId);
-            var loserClient = this.Clients.Client(loser.ConnectionId);
-            loserClient.endGame(false);
+            EndGame(new string[] { loser.ConnectionId }, false);
         }
         
         private void NextGame()
@@ -127,6 +122,16 @@ namespace Rituals.Services
             Clients
                 .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
                 .nextGame(activePlayers.Count, gestureId);
+            UpdateUI();
+        }
+
+        private void EndGame(string[] connectionIds, bool outcome)
+        {
+            for (int i = 0; i < connectionIds.Length; i++)
+            {
+                GameRoom.DropPlayerByConnectionId(connectionIds[i]);
+            }
+            Clients.Clients(connectionIds).endGame(outcome);
             UpdateUI();
         }
     }
