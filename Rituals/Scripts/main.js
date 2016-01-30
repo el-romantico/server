@@ -1,4 +1,4 @@
-﻿var secondsConst = 15;
+﻿var secondsConst = 30;
 var interval = null;
 var totalSeconds = secondsConst;
 $(function () {
