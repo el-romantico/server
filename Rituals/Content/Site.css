@@ -1,6 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    font-family:'Book Antiqua';
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -20,4 +21,13 @@ textarea {
 
 .hidden {
     display:none;
+}
+
+.activity-monitor {
+    font-size:18px;
+}
+
+.jumbotron,
+.jumbotron h1 {
+    font-family:'Book Antiqua' !important;
 }
