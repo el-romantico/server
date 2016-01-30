@@ -89,7 +89,7 @@ namespace Rituals.Services
 
         internal static int GetNextGestureId()
         {
-            return 5;
+            return 0;
         }
     }
 }
