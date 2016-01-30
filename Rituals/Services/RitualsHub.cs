@@ -1,11 +1,15 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System.Linq;
+using System.Timers;
+using System;
 
 namespace Rituals.Services
 {
     public class RitualsHub : Hub
     {
+        static Timer timer;
+
         public void CheckConnection()
         {
             Clients.All.checkConnection();
@@ -20,8 +24,54 @@ namespace Rituals.Services
         public void StartGame()
         {
             int activePlayersCount = GameRoom.GetConnectedCount();
-            int gestureNumber = 0; // Random
+            int gestureNumber = GameRoom.GetNextGestureId();
             Clients.All.startGame(activePlayersCount, gestureNumber);
+            StartTimer();
+        }
+
+        public void StartTimer()
+        {
+            var countdown = 31;
+            timer = new Timer(1000);
+            timer.Elapsed += (sender, e) =>
+            {
+                countdown--;
+                UpdateCountdown(countdown);
+                if (countdown == 0)
+                {
+                    timer.Stop();
+                    timer.Dispose();
+                    var connectedPlayers = GameRoom.GetConnectedPlayers();
+                    if (connectedPlayers.All(x => x.StillPlaying))
+                    {
+                        NextGame();
+                        StartTimer();
+                    }
+                    else
+                    {
+                        var winnerIds = connectedPlayers
+                            .Where(x => !x.StillPlaying)
+                            .Select(x => x.ConnectionId)
+                            .ToArray();
+                        var loserIds = connectedPlayers
+                            .Where(x => x.StillPlaying)
+                            .Select(p => p.ConnectionId)
+                            .ToArray();
+                        Clients.Clients(loserIds).endGame(false);
+                        loserIds.ToList().ForEach(ci => GameRoom.DropPlayerByConnectionId(ci));
+                        if (winnerIds.Length == 1)
+                        {
+                            Clients.Client(winnerIds.Single()).endGame(true);
+                        }
+                        else
+                        {
+                            var gestureId = GameRoom.GetNextGestureId();
+                            Clients.Clients(winnerIds).nextGame(winnerIds.Length, gestureId);
+                        }
+                    }
+                }
+            };
+            timer.Start();
         }
 
         public void Success()
@@ -46,11 +96,7 @@ namespace Rituals.Services
             }
             else
             {
-                int nextGameGesture = 1;
-                var activePlayers = GameRoom.GetConnectedPlayers();
-                this.Clients
-                    .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
-                    .nextGame(winnersCount, nextGameGesture);
+                NextGame();
             }
             GameRoom.RestartPlayersState();
         }
@@ -73,6 +119,21 @@ namespace Rituals.Services
         {
             GameRoom.DropAllPlayers();
             UpdateUI();
+        }
+
+        public void UpdateCountdown(int countdown)
+        {
+            var activePlayers = GameRoom.GetConnectedPlayers();
+            Clients.Clients(activePlayers.Select(p => p.ConnectionId).ToArray()).updateCountdown(countdown);
+        }
+
+        public void NextGame()
+        {
+            int gestureId = GameRoom.GetNextGestureId();
+            var activePlayers = GameRoom.GetConnectedPlayers();
+            Clients
+                .Clients(activePlayers.Select(x => x.ConnectionId).ToArray())
+                .nextGame(activePlayers.Count, gestureId);
         }
 
         public override Task OnDisconnected(bool stopCalled)

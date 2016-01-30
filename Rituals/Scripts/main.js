@@ -17,6 +17,9 @@
             append("You lose!");
         }
     }
+    hub.client.updateCountdown = function (countdown) {
+        append(countdown);
+    }
     
     $.connection.hub.start().done(function () {
         $('#test').click(function () {

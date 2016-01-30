@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using System.Web;
 
 namespace Rituals.Services
@@ -19,7 +20,7 @@ namespace Rituals.Services
         {
             allPlayers.Clear();
         }
-
+        
         public static void DropPlayerByConnectionId(string connectionId)
         {
             if (allPlayers.Any(x => x.ConnectionId == connectionId))
@@ -64,6 +65,11 @@ namespace Rituals.Services
         internal static int GetSuccessfulCount()
         {
             return allPlayers.Count(x => !x.StillPlaying);
+        }
+
+        internal static int GetNextGestureId()
+        {
+            return 5;
         }
     }
 }
