@@ -10,6 +10,13 @@
     hub.client.successfulCount = function (count) {
         $('#successful-players').text(count);
     }
+    hub.client.endGame = function (win) {
+        if(win) {
+            console.log("You win!");
+        } else {
+            console.log("You lose!");
+        }
+    }
     
     $.connection.hub.start().done(function () {
         $('#test').click(function () {

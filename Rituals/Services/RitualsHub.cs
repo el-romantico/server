@@ -29,24 +29,34 @@ namespace Rituals.Services
             var winningCondition = GameRoom.CheckWinningCondition();
             if (winningCondition)
             {
-                var loser = GameRoom.GetLoser();
-                GameRoom.DropPlayerByConnectionId(loser.ConnectionId);
-                var looserClient = this.Clients.Client(loser.ConnectionId);
-                looserClient.endGame(false);
-                looserClient.Stop();
-                int activePlayersCount = GameRoom.GetConnectedCount() - GameRoom.GetSuccessfulCount();
-                int nextGameGesture = 1;
-                if(activePlayersCount == 0)
-                {
-                    var winner = GameRoom.GetWinner();
-                    this.Clients.Client(winner.ConnectionId).endGame(true);
-                }
-                else
-                {
-                    this.Clients.All.nextGame(activePlayersCount, nextGameGesture);
-                }
+                UpdateLoser();
+                UpdateWinners();
             }
             UpdateUI();
+        }
+
+        private void UpdateWinners()
+        {
+            int winnersCount = GameRoom.GetSuccessfulCount();
+            if (winnersCount == 1)
+            {
+                var winner = GameRoom.GetWinner();
+                this.Clients.Client(winner.ConnectionId).endGame(true);
+            }
+            else
+            {
+                int nextGameGesture = 1;
+                this.Clients.All.nextGame(winnersCount, nextGameGesture);
+            }
+        }
+
+        private void UpdateLoser()
+        {
+            var loser = GameRoom.GetLoser();
+            GameRoom.DropPlayerByConnectionId(loser.ConnectionId);
+            var loserClient = this.Clients.Client(loser.ConnectionId);
+            loserClient.endGame(false);
+            loserClient.Stop();
         }
 
         public void UpdateUI()
