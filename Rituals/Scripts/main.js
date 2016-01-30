@@ -1,6 +1,8 @@
-﻿$(function () {
+﻿var interval = null;
+var totalSeconds = 15;
+$(function () {
     var hub = $.connection.ritualsHub;
-    // Create a function that the hub can call back to display messages.
+    
     hub.client.checkConnection = function () {
         alert('Connection check successful');
     };
@@ -11,22 +13,35 @@
         $('#successful-players').text(count);
     };
     hub.client.endGame = function (win) {
-        if (win) {
-            append('You win!');
-        } else {
-            append('You lose!');
-        }
+        clearInterval(interval);
+        win ? append('You win!') : append('You lose!');
     };
     hub.client.updateCountdown = function (countdown) {
-        $('#timer').text(countdown);
+        
     };
     hub.client.nextGame = function (playersCount, gesture) {
-        append('Initiating game with:' + playersCount + ' players');
+        initiateGame(playersCount);
     };
     hub.client.startGame = function (playersCount, gesture) {
-        append('Initiating game with:' + playersCount + ' players');
+        initiateGame(playersCount);
     };
     
+    function initiateGame(playersCount) {
+        append('Initiating game with:' + playersCount + ' players');
+        totalSeconds = 15;
+        interval = setInterval(setTime, 1000);
+
+        function setTime() {
+            --totalSeconds;
+            if (totalSeconds <= 0) {
+                hub.server.timeoutExpired();
+                clearInterval(interval);
+                totalSeconds = 15;
+            }
+            $('#timer').text(totalSeconds);
+        }
+    }
+
     $.connection.hub.start().done(function () {
         $('#test').click(function () {
             hub.server.checkConnection();
@@ -51,6 +66,7 @@
             hub.server.updateUI();
         });
         hub.server.updateUI();
+        $('#timer').text(15);
     });
 });
 

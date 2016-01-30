@@ -66,10 +66,11 @@ namespace Rituals.Services
                 {
                     var winnerIds = GameRoom.GetWinnersConnectionIds();
                     var loserIds = GameRoom.GetLosersConnectionIds();
-                    Clients.Clients(loserIds).endGame(false);
                     loserIds.ToList().ForEach(ci => GameRoom.DropPlayerByConnectionId(ci));
+                    Clients.Clients(loserIds).endGame(false);
                     if (winnerIds.Length == 1)
                     {
+                        GameRoom.DropPlayerByConnectionId(winnerIds.Single());
                         Clients.Client(winnerIds.Single()).endGame(true);
                     }
                     else
@@ -100,6 +101,7 @@ namespace Rituals.Services
             if (winnersCount == 1)
             {
                 var winner = GameRoom.GetWinner();
+                GameRoom.DropPlayerByConnectionId(winner.ConnectionId);
                 this.Clients.Client(winner.ConnectionId).endGame(true);
             }
             else
