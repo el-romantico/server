@@ -28,5 +28,9 @@
             hub.server.disconnectAll();
             console.log("Dropped All players");
         });
+        $("#success").click(function () {
+            hub.server.success();
+            console.log("player succeeded");
+        });
     });
 });

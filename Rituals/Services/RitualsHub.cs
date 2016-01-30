@@ -34,9 +34,9 @@ namespace Rituals.Services
                 var looserClient = this.Clients.Client(loser.ConnectionId);
                 looserClient.endGame(false);
                 looserClient.Stop();
-                int nextGameGesture = 1;
                 int activePlayersCount = GameRoom.GetConnectedCount() - GameRoom.GetSuccessfulCount();
-                if(activePlayersCount == 1)
+                int nextGameGesture = 1;
+                if(activePlayersCount == 0)
                 {
                     var winner = GameRoom.GetWinner();
                     this.Clients.Client(winner.ConnectionId).endGame(true);
