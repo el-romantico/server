@@ -31,13 +31,16 @@ $(function () {
         $('#debug-tools').toggleClass('hidden');
     });
 
+    $('#clear-output').click(function () {
+        $('#output').val('');
+    });
+
     function initiateGame(playersCount, gestureId) {
         append('Initiating game with:' + playersCount + ' players');
         $('.gesture').addClass('hidden');
         $('#gesture-' + gestureId).removeClass('hidden');
         totalSeconds = secondsConst;
-        clearInterval(
-interval);
+        clearInterval(interval);
         interval = setInterval(setTime, 1000);
 
         function setTime() {

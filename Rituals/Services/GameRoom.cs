@@ -7,7 +7,7 @@ namespace Rituals.Services
     public static class GameRoom
     {
         private static List<Player> allPlayers = new List<Player>();
-        private static int[] gesturesIdsList = new int[] { 3, 1, 2, 0 };
+        private static int[] gesturesIdsList = new int[] { 3, 1, 4, 2, 0 };
         private static int currentGestureIndex = 0;
         private static string gameAdmin;
 
