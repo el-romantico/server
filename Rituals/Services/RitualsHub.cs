@@ -27,9 +27,12 @@ namespace Rituals.Services
                 GameRoom.SetAdmin(Context.ConnectionId);
             }
 
-            int activePlayersCount = GameRoom.GetConnectedCount();
+            var activePlayers = GameRoom.GetConnectedPlayers();
             int gestureNumber = GameRoom.GetNextGestureId();
-            Clients.All.startGame(activePlayersCount, gestureNumber);
+            var clients = activePlayers.Select(p => p.ConnectionId).ToArray();
+            var admin = GameRoom.GetAdminConnectionId();
+            Clients.Clients(clients).startGame(activePlayers.Count, gestureNumber);
+            Clients.Client(admin).startGame(activePlayers.Count, gestureNumber);
         }
 
 
