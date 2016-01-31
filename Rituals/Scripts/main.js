@@ -32,7 +32,7 @@ $(function () {
     });
 
     $('#clear-output').click(function () {
-        $('#output').val('');
+        $('#output').text('');
     });
 
     function initiateGame(playersCount, gestureId) {
